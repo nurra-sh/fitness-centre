@@ -1,0 +1,70 @@
+<section class="page-header">
+    <div class="container">
+        <p class="page-tag">Абонементы</p>
+        <h1 class="page-title">Выберите свой абонемент</h1>
+        <p class="page-subtitle">
+            Четыре варианта на 1, 3, 6 и 12 месяцев. Чем дольше срок, тем ниже цена за месяц.
+        </p>
+    </div>
+</section>
+
+<section class="plans">
+    <div class="container">
+        <div class="plans-grid">
+            @for (plan of plans; track plan.id) {
+                <article class="plan-card" [class.plan-card--highlight]="plan.highlight">
+                    @if (plan.highlight) {
+                        <span class="plan-badge">Самый выгодный</span>
+                    }
+
+                    <h2 class="plan-name">{{ plan.name }}</h2>
+                    <div class="plan-price">{{ formatTenge(plan.price) }}</div>
+                    <p class="plan-per-month">{{ formatTenge(pricePerMonth(plan)) }} в месяц</p>
+
+                    @if (savingPercent(plan) > 0) {
+                        <span class="plan-saving">Экономия {{ savingPercent(plan) }}%</span>
+                    } @else {
+                        <span class="plan-saving plan-saving--neutral">Без обязательств</span>
+                    }
+
+                    <ul class="plan-perks">
+                        @for (perk of plan.perks; track perk) {
+                            <li>{{ perk }}</li>
+                        }
+                    </ul>
+
+                    <button
+                        type="button"
+                        class="btn plan-button"
+                        [class.btn--primary]="plan.highlight"
+                        [class.btn--outline]="!plan.highlight"
+                        (click)="onBuy(plan)"
+                    >
+                        Купить
+                    </button>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="faq">
+    <div class="container faq-inner">
+        <h2 class="section-title">Частые вопросы</h2>
+
+        @for (item of faq; track item.q) {
+            <details class="faq-item">
+                <summary>{{ item.q }}</summary>
+                <p>{{ item.a }}</p>
+            </details>
+        }
+    </div>
+</section>
+
+<section class="cta">
+    <div class="container cta-inner">
+        <h2 class="cta-title">Остались вопросы?</h2>
+        <p class="cta-text">Напишите нам, и мы поможем выбрать подходящий абонемент.</p>
+        <a class="btn btn--white" routerLink="/contact">Связаться с нами</a>
+    </div>
+</section>

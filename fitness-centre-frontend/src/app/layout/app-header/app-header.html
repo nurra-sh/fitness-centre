@@ -1,0 +1,24 @@
+<header class="app-header">
+    <div class="container header-inner">
+        <a class="brand" routerLink="/">
+            <img src="fitnesslogo.jpg" alt="Iron Pulse logo" />
+            <span class="brand-text">Iron Pulse Fitness</span>
+        </a>
+
+        <nav class="nav">
+            <a class="nav-link" routerLink="/plans" routerLinkActive="active">Memberships</a>
+            <a class="nav-link" routerLink="/my-membership" routerLinkActive="active">My Membership</a>
+            <a class="nav-link" routerLink="/about" routerLinkActive="active">About Us</a>
+            <a class="nav-link" routerLink="/contact" routerLinkActive="active">Contact</a>
+        </nav>
+
+        <div class="actions">
+            @if (!isAuthenticated()) {
+                <a routerLink="/login"><button pButton label="Sign in" severity="secondary" outlined="true">Sign in</button></a>
+            }
+            @if (isAuthenticated()) {
+                <button (click)="logout()" pButton label="Logout" severity="secondary" outlined="true">Logout</button>
+            }
+        </div>
+    </div>
+</header>

@@ -1,0 +1,99 @@
+<section class="hero">
+    <img class="hero-bg" src="hero.jpg" alt="" />
+    <div class="hero-overlay"></div>
+
+    <div class="container hero-content">
+        <p class="hero-tag">Фитнес-центр</p>
+        <h1 class="hero-title">Тренируйтесь с удовольствием в Iron Pulse Fitness</h1>
+        <p class="hero-subtitle">
+            Современное оборудование, опытные тренеры и гибкие абонементы. Выберите тариф, оплатите
+            онлайн и следите за остатком дней в личном кабинете.
+        </p>
+
+        <div class="hero-actions">
+            <a class="btn btn--primary" routerLink="/register">Начать заниматься</a>
+            <button class="btn btn--light" type="button" (click)="plansSection.scrollIntoView({ behavior: 'smooth' })">
+                Смотреть абонементы
+            </button>
+        </div>
+    </div>
+</section>
+
+<section class="benefits">
+    <div class="container">
+        <div class="benefits-grid">
+            @for (item of benefits; track item.title) {
+                <div class="benefit">
+                    <h3 class="benefit-title">{{ item.title }}</h3>
+                    <p class="benefit-text">{{ item.text }}</p>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="plans" #plansSection>
+    <div class="container">
+        <h2 class="section-title">Выберите абонемент</h2>
+        <p class="section-subtitle">Чем дольше срок, тем ниже цена за месяц.</p>
+
+        <div class="plans-grid">
+            @for (plan of plans; track plan.id) {
+                <article class="plan-card" [class.plan-card--highlight]="plan.highlight">
+                    @if (plan.highlight) {
+                        <span class="plan-badge">Самый выгодный</span>
+                    }
+
+                    <h3 class="plan-name">{{ plan.name }}</h3>
+                    <div class="plan-price">{{ formatTenge(plan.price) }}</div>
+                    <p class="plan-per-month">{{ formatTenge(pricePerMonth(plan)) }} в месяц</p>
+
+                    @if (savingPercent(plan) > 0) {
+                        <span class="plan-saving">Экономия {{ savingPercent(plan) }}%</span>
+                    } @else {
+                        <span class="plan-saving plan-saving--neutral">Без обязательств</span>
+                    }
+
+                    <ul class="plan-perks">
+                        @for (perk of plan.perks; track perk) {
+                            <li>{{ perk }}</li>
+                        }
+                    </ul>
+
+                    <a
+                        class="btn plan-button"
+                        [class.btn--primary]="plan.highlight"
+                        [class.btn--outline]="!plan.highlight"
+                        routerLink="/plans"
+                    >
+                        Подробнее
+                    </a>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="steps">
+    <div class="container">
+        <h2 class="section-title">Как это работает</h2>
+
+        <div class="steps-grid">
+            @for (step of steps; track step.title; let i = $index) {
+                <div class="step">
+                    <span class="step-number">{{ i + 1 }}</span>
+                    <h3 class="step-title">{{ step.title }}</h3>
+                    <p class="step-text">{{ step.text }}</p>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="cta">
+    <div class="container cta-inner">
+        <h2 class="cta-title">Готовы начать?</h2>
+        <p class="cta-text">Зарегистрируйтесь и оформите абонемент за пару минут.</p>
+        <a class="btn btn--white" routerLink="/register">Зарегистрироваться</a>
+    </div>
+</section>
