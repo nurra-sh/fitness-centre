@@ -1,5 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { User } from '../types/auth.types';
+import { RolesEnum, RolesIdEnum, User } from '../types/auth.types';
 import { TOKEN_KEY } from '../../../core/constants/auth.constants';
 
 @Injectable({
@@ -14,7 +14,13 @@ export class Auth {
     readonly isAuthenticated = computed(() => {
       return Boolean(this.token()) && Boolean(this.currentUser())
     })
-  
+     hasRoles(roles: RolesEnum[]): boolean {
+        const user = this.currentUser()
+        if (!user) {
+            return false
+        }
+        return roles.some((role) => user.roleId === RolesIdEnum[role])
+    }
     setToken(token: string) {
         this.tokenSignal.set(token)
         this.addTokenToLocalStorage(token)

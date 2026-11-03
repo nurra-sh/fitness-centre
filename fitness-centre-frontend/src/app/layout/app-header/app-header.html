@@ -6,19 +6,23 @@
         </a>
 
         <nav class="nav">
-            <a class="nav-link" routerLink="/plans" routerLinkActive="active">Memberships</a>
-            <a class="nav-link" routerLink="/my-membership" routerLinkActive="active">My Membership</a>
-            <a class="nav-link" routerLink="/about" routerLinkActive="active">About Us</a>
-            <a class="nav-link" routerLink="/contact" routerLinkActive="active">Contact</a>
+            <a class="nav-link" routerLink="/plans" routerLinkActive="active">Абонементы</a>
+            <a class="nav-link" routerLink="/my-membership" routerLinkActive="active">Мой абонемент</a>
+            <a class="nav-link" routerLink="/about" routerLinkActive="active">О нас</a>
+            <a class="nav-link" routerLink="/contact" routerLinkActive="active">Контакты</a>
+             @if (isAdmin()) {
+                <a class="nav-link" routerLink="/admin/dashboard" routerLinkActive="active">Админ-панель</a>
+            }
         </nav>
 
         <div class="actions">
             @if (!isAuthenticated()) {
-                <a routerLink="/login"><button pButton label="Sign in" severity="secondary" outlined="true">Sign in</button></a>
+                <a routerLink="/login"><button pButton label="Sign in" severity="secondary" outlined="true">Войти</button></a>
+            <a routerLink="/register"><button pButton label="Register">Зарегистрироваться</button></a>
             }
             @if (isAuthenticated()) {
-                <button (click)="logout()" pButton label="Logout" severity="secondary" outlined="true">Logout</button>
-            }
+                <button (click)="logout()" pButton label="Logout" severity="secondary" outlined="true">Выйти</button>
+            } 
         </div>
     </div>
 </header>

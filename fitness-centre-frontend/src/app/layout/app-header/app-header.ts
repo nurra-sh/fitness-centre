@@ -2,6 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Auth } from '../../modules/auth/services/auth';
+import { RolesEnum } from '../../modules/auth/types/auth.types';
 
 @Component({
   imports: [ButtonModule, RouterLink, RouterLinkActive],
@@ -13,7 +14,7 @@ export class AppHeader {
   private readonly router = inject(Router)
     private readonly authService = inject(Auth)
     readonly isAuthenticated = computed(() => this.authService.isAuthenticated())
-
+    readonly isAdmin = computed(() => this.authService.hasRoles([RolesEnum.ADMIN]))
     logout() {
       this.authService.clearSession()
       this.router.navigateByUrl('/login')
