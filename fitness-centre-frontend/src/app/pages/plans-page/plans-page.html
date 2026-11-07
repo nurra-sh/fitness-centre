@@ -10,41 +10,44 @@
 
 <section class="plans">
     <div class="container">
+        @if (plansLoading()) {
+        <p class="plans-state">Загружаем абонементы...</p>
+        } @else if (plansError()) {
+        <p class="plans-state">Не удалось загрузить абонементы. Обновите страницу или попробуйте позже.</p>
+        } @else if (plans().length === 0) {
+        <p class="plans-state">Абонементы временно недоступны.</p>
+        } @else {
         <div class="plans-grid">
-            @for (plan of plans; track plan.id) {
-                <article class="plan-card" [class.plan-card--highlight]="plan.highlight">
-                    @if (plan.highlight) {
-                        <span class="plan-badge">Самый выгодный</span>
+            @for (plan of plans(); track plan.id) {
+            <article class="plan-card" [class.plan-card--highlight]="plan.highlight">
+                @if (plan.highlight) {
+                <span class="plan-badge">Самый выгодный</span>
+                }
+
+                <h2 class="plan-name">{{ plan.name }}</h2>
+                <div class="plan-price">{{ formatTenge(plan.price) }}</div>
+                <p class="plan-per-month">{{ formatTenge(pricePerMonth(plan)) }} в месяц</p>
+
+                @if (savingPercent(plan) > 0) {
+                <span class="plan-saving">Экономия {{ savingPercent(plan) }}%</span>
+                } @else {
+                <span class="plan-saving plan-saving--neutral">Без обязательств</span>
+                }
+
+                <ul class="plan-perks">
+                    @for (perk of plan.perks; track perk) {
+                    <li>{{ perk }}</li>
                     }
+                </ul>
 
-                    <h2 class="plan-name">{{ plan.name }}</h2>
-                    <div class="plan-price">{{ formatTenge(plan.price) }}</div>
-                    <p class="plan-per-month">{{ formatTenge(pricePerMonth(plan)) }} в месяц</p>
-
-                    @if (savingPercent(plan) > 0) {
-                        <span class="plan-saving">Экономия {{ savingPercent(plan) }}%</span>
-                    } @else {
-                        <span class="plan-saving plan-saving--neutral">Без обязательств</span>
-                    }
-
-                    <ul class="plan-perks">
-                        @for (perk of plan.perks; track perk) {
-                            <li>{{ perk }}</li>
-                        }
-                    </ul>
-
-                    <button
-                        type="button"
-                        class="btn plan-button"
-                        [class.btn--primary]="plan.highlight"
-                        [class.btn--outline]="!plan.highlight"
-                        (click)="onBuy(plan)"
-                    >
-                        Купить
-                    </button>
-                </article>
+                <button type="button" class="btn plan-button" [class.btn--primary]="plan.highlight"
+                    [class.btn--outline]="!plan.highlight" (click)="onBuy(plan)">
+                    Купить
+                </button>
+            </article>
             }
         </div>
+        }
     </div>
 </section>
 
@@ -53,10 +56,10 @@
         <h2 class="section-title">Частые вопросы</h2>
 
         @for (item of faq; track item.q) {
-            <details class="faq-item">
-                <summary>{{ item.q }}</summary>
-                <p>{{ item.a }}</p>
-            </details>
+        <details class="faq-item">
+            <summary>{{ item.q }}</summary>
+            <p>{{ item.a }}</p>
+        </details>
         }
     </div>
 </section>

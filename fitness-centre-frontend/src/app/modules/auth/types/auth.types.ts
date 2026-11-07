@@ -14,6 +14,8 @@ export interface User {
     id: number
     fullName: string
     email: string
+    phone: string | null
+    cardNumber: string | null
     roleId: RolesIdEnum
     createdAt: string
     updatedAt: string
@@ -24,6 +26,7 @@ export interface RegisterBody {
     password: string;
     password_confirmation: string;
     fullName: string;
+    phone: string;
 }
 
 export interface RegisterResponse {

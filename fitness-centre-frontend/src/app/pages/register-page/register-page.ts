@@ -10,6 +10,7 @@ import { RouterLink } from '@angular/router';
 import { AuthApi } from '../../modules/auth/services/auth-api';
 import { mustMatch } from '../../shared/validators/must-watch.validator';
 import { finalize } from 'rxjs';
+import { phoneValidator } from '../../shared/validators/phone.validator';
 
 @Component({
   selector: 'app-register-page',
@@ -26,8 +27,9 @@ export class RegisterPage {
   readonly loading = this.loadingSignal.asReadonly()
 
   readonly registerForm = this.formBuilder.group({
-    fullName: ['', []],
+    fullName: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
+    phone: ['', [Validators.required, phoneValidator]],
     password: ['', [Validators.required]],
     password_confirmation: ['', [Validators.required]]
   }, { validators: mustMatch('password', 'password_confirmation') })

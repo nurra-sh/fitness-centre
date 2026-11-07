@@ -1,4 +1,20 @@
 import vine from '@vinejs/vine'
+import { normalizePhone } from '#services/phone_service'
+
+// Проверяет номер и сохраняет его в едином виде +7XXXXXXXXXX
+const phoneRule = vine.createRule((value, _options, field) => {
+  if (typeof value !== 'string') {
+    return
+  }
+
+  const normalized = normalizePhone(value)
+  if (!normalized) {
+    field.report('Введите номер в формате +7 XXX XXX XX XX', 'phone', field)
+    return
+  }
+
+  field.mutate(normalized, field)
+})
 
 export const loginValidator = vine.compile(
   vine.object({email: vine.string().email().normalizeEmail(),
@@ -24,7 +40,8 @@ export const registerValidator = vine.compile(
     .maxLength(128)
     .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
     .confirmed(),
-    fullName: vine.string().trim()
+    fullName: vine.string().trim(),
+    phone: vine.string().trim().use(phoneRule()),
   })
   
 )

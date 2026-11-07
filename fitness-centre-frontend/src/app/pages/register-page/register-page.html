@@ -8,9 +8,12 @@
 
                 <form class="login-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
                     <div class="login-form-item">
-                        <label for="fullName">ФИО</label>
+                        <label for="fullName">ФИО *</label>
                         <input type="text" pInputText id="fullName" formControlName="fullName"
                             placeholder="Введите ФИО" />
+                        @if(registerForm.controls.fullName.touched && registerForm.controls.fullName.invalid) {
+                        <p-message severity="error" variant="simple" size="small">ФИО обязательно</p-message>
+                        }
                     </div>
 
                     <div class="login-form-item">
@@ -23,6 +26,21 @@
                             registerForm.controls.email.errors?.['required']
                             ? 'Электронная почта обязательна'
                             : 'Неверная электронная почта'
+                            }}
+                        </p-message>
+                        }
+                    </div>
+
+                    <div class="login-form-item">
+                        <label for="phone">Номер телефона *</label>
+                        <input type="tel" pInputText id="phone" formControlName="phone"
+                            placeholder="+7 701 123 45 67" />
+                        @if(registerForm.controls.phone.touched && registerForm.controls.phone.invalid) {
+                        <p-message severity="error" variant="simple" size="small">
+                            {{
+                            registerForm.controls.phone.errors?.['required']
+                            ? 'Номер телефона обязателен'
+                            : 'Введите номер в формате +7 XXX XXX XX XX'
                             }}
                         </p-message>
                         }
@@ -62,8 +80,8 @@
 
                     <button [loading]="loading()" type="submit" pButton>Зарегистрируйтесь</button>
 
-                    <p class="login-register-text">Уже есть аккаунт? <a routerLink="/login"><p-button
-                                label="Войти" link /></a></p>
+                    <p class="login-register-text">Уже есть аккаунт? <a routerLink="/login"><p-button label="Войти"
+                                link /></a></p>
                 </form>
             </p-card>
         </div>

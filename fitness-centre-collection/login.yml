@@ -5,7 +5,7 @@ info:
 
 http:
   method: POST
-  url: http://localhost:3333
+  url: "{{BASE_URL}}/auth/login"
   auth: inherit
 
 settings:

@@ -11,6 +11,7 @@ import AuthController from '#controllers/auth_controller'
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 import { RolesEnum } from '#enums/role_enums'
+import PlansController from '#controllers/plans_controller'
 
 router.get('/', async () => {
   return {
@@ -24,6 +25,7 @@ router.group(() => {
     router.get('/me', [AuthController, 'me']).use(middleware.auth({ guards: ['api'] }))
     
   }).prefix('auth')
+  router.get('plans', [PlansController, 'index'])
 }).prefix('/api/v1')
 // Админские маршруты: сначала проверка токена, потом проверка роли
 router

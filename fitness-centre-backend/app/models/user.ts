@@ -28,6 +28,25 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column()
   declare roleId: number
 
+  @column()
+  declare phone: string | null
+
+  // ИИН никогда не попадает в JSON-ответы автоматически: админка отдаёт его только явно
+  @column({ serializeAs: null })
+  declare iin: string | null
+
+  @column()
+  declare cardNumber: string | null
+
+  @column()
+  declare isActive: boolean
+
+  @column()
+  declare mustChangePassword: boolean
+
+  @column()
+  declare createdByAdminId: number | null
+
   @belongsTo(() => Role)
   declare role: BelongsTo<typeof Role>
 

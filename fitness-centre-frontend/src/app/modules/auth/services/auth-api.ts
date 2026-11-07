@@ -61,6 +61,7 @@ me() {
       password: body.password.trim(),
       password_confirmation: body.password_confirmation.trim(),
       fullName: body.fullName.trim(),
+       phone: body.phone.trim(),
     }
   }
 }

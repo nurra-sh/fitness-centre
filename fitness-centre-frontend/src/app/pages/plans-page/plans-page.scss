@@ -95,6 +95,12 @@
     background: var(--soft);
 }
 
+.plans-state {
+    padding: 2rem 0;
+    text-align: center;
+    color: var(--muted);
+}
+
 .plans-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
