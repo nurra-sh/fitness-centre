@@ -272,3 +272,87 @@
         padding: 3rem 0;
     }
 }
+/* ---------- Окно выбора способа оплаты ---------- */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgb(15 23 20 / 0.55);
+}
+
+.modal {
+    width: min(440px, 100%);
+    padding: 1.75rem 1.5rem;
+    border-radius: 14px;
+    background: #fff;
+}
+
+.modal-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+.modal-plan {
+    margin: 0.4rem 0 1.25rem;
+    color: var(--muted);
+}
+
+.methods {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.method {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 120ms ease, background-color 120ms ease;
+
+    &:hover:not(:disabled) {
+        border-color: var(--green);
+        background: #e7f6ef;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+    }
+}
+
+.method-title {
+    font-weight: 700;
+}
+
+.method-hint {
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.modal-info {
+    margin-bottom: 0.75rem;
+    color: var(--muted);
+}
+
+.modal-error {
+    margin-bottom: 0.75rem;
+    color: #b42318;
+    font-weight: 600;
+}
+
+.modal-close {
+    width: 100%;
+}

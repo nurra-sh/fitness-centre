@@ -1,6 +1,10 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { Auth } from '../../modules/auth/services/auth';
+import { MembershipsApi } from '../../modules/memberships/services/memberships-api';
+import { PaymentMethod } from '../../modules/memberships/types/memberships.types';
 import { PlansApi } from '../../modules/plans/services/plans-api';
 import { Plan } from '../../modules/plans/types/plans.types';
 import { calcSavingPercent, formatTenge, pricePerMonth } from '../../modules/plans/utils/plans.utils';
@@ -18,6 +22,21 @@ export class PlansPage {
 
   readonly formatTenge = formatTenge;
   readonly pricePerMonth = pricePerMonth;
+
+   private readonly auth = inject(Auth);
+  private readonly router = inject(Router);
+  private readonly membershipsApi = inject(MembershipsApi);
+
+  // окно выбора способа оплаты
+  readonly selectedPlan = signal<Plan | null>(null);
+  readonly purchasing = signal(false);
+  readonly purchaseError = signal<string | null>(null);
+
+  // Когда подключим Stripe, у банковской карты нужно поставить enabled: true
+  readonly methods: { id: PaymentMethod; title: string; hint: string; enabled: boolean }[] = [
+    { id: 'debit_card', title: 'Банковская карта', hint: 'Скоро: оплата через Stripe', enabled: false },
+    { id: 'kaspi', title: 'Kaspi', hint: 'Имитация оплаты для учебного проекта', enabled: true },
+  ];
 
   readonly faq = [
     {
@@ -58,9 +77,42 @@ export class PlansPage {
     return calcSavingPercent(plan, this.plans());
   }
 
-  onBuy(plan: Plan): void {
-    // TODO: если пользователь не вошёл, отправить на /login;
-    // иначе POST /memberships/checkout { planId } и редирект на ссылку Stripe
-    console.log('Покупка абонемента', plan.id);
+    onBuy(plan: Plan): void {
+    // токен проверяем, а не загруженного пользователя: после обновления страницы он ещё не загружен
+    if (!this.auth.token()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.purchaseError.set(null);
+    this.selectedPlan.set(plan);
+  }
+
+  closeModal(): void {
+    if (!this.purchasing()) {
+      this.selectedPlan.set(null);
+    }
+  }
+
+  pay(method: PaymentMethod): void {
+    const plan = this.selectedPlan();
+    if (!plan || this.purchasing()) {
+      return;
+    }
+
+    this.purchasing.set(true);
+    this.purchaseError.set(null);
+
+    this.membershipsApi.purchase({ planId: plan.id, paymentMethod: method }).subscribe({
+      next: () => {
+        this.purchasing.set(false);
+        this.selectedPlan.set(null);
+        this.router.navigate(['/my-membership'], { queryParams: { payment: 'success' } });
+      },
+      error: (error: HttpErrorResponse) => {
+        this.purchasing.set(false);
+        this.purchaseError.set(error.error?.message ?? 'Не удалось оформить абонемент. Попробуйте ещё раз.');
+      },
+    });
   }
 }

@@ -2,7 +2,6 @@ import type { HttpContext } from '@adonisjs/core/http'
 import User from '#models/user'
 import { loginValidator } from '#validators/auth'
 import { registerValidator } from '#validators/auth'
-import { createMember } from '#services/member_service'
 export default class AuthController {
     async login({ request, response }: HttpContext) {
         const { email, password } = await request.validateUsing(loginValidator)
@@ -22,7 +21,7 @@ export default class AuthController {
     async register({ request, response }: HttpContext) {
         const payload = await request.validateUsing(registerValidator)
 
-        await createMember(payload)
+        await User.create(payload)
 
         return response.created({
             message: 'User registered successfully',

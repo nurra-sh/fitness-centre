@@ -71,3 +71,31 @@
         <a class="btn btn--white" routerLink="/contact">Связаться с нами</a>
     </div>
 </section>
+@if (selectedPlan(); as plan) {
+<div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="pay-title" (click)="$event.stopPropagation()">
+        <h2 id="pay-title" class="modal-title">Оплата абонемента</h2>
+        <p class="modal-plan">{{ plan.name }}, {{ formatTenge(plan.price) }}</p>
+
+        <div class="methods">
+            @for (method of methods; track method.id) {
+            <button type="button" class="method" [disabled]="!method.enabled || purchasing()" (click)="pay(method.id)">
+                <span class="method-title">{{ method.title }}</span>
+                <span class="method-hint">{{ method.hint }}</span>
+            </button>
+            }
+        </div>
+
+        @if (purchasing()) {
+        <p class="modal-info">Оформляем абонемент...</p>
+        }
+        @if (purchaseError()) {
+        <p class="modal-error">{{ purchaseError() }}</p>
+        }
+
+        <button type="button" class="btn btn--outline modal-close" [disabled]="purchasing()" (click)="closeModal()">
+            Отмена
+        </button>
+    </div>
+</div>
+}

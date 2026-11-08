@@ -1,0 +1,196 @@
+:host {
+    --green: var(--p-primary-color, #10b981);
+    --green-dark: var(--p-primary-600, #059669);
+    --text: #1f2933;
+    --muted: #5f6b76;
+    --border: #dfe6e1;
+    --soft: #f4f7f5;
+    display: block;
+    color: var(--text);
+}
+
+.container {
+    width: min(760px, calc(100% - 2rem));
+    margin: 0 auto;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.7rem 1.4rem;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 120ms ease, color 120ms ease;
+}
+
+.btn--primary {
+    background: var(--green);
+    color: #fff;
+
+    &:hover {
+        background: var(--green-dark);
+    }
+}
+
+.btn--outline {
+    background: transparent;
+    color: var(--green-dark);
+    border-color: var(--green);
+
+    &:hover {
+        background: var(--green);
+        color: #fff;
+    }
+}
+
+.page-header {
+    padding: 3rem 0 2rem;
+    background: var(--soft);
+    text-align: center;
+}
+
+.page-tag {
+    display: inline-block;
+    margin-bottom: 1rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    background: var(--green);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.page-title {
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    font-weight: 800;
+}
+
+.content {
+    padding: 2rem 0 4rem;
+    background: var(--soft);
+}
+
+.content-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.state {
+    padding: 2rem 0;
+    text-align: center;
+    color: var(--muted);
+}
+
+.banner {
+    padding: 0.9rem 1.2rem;
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    background: #e7f6ef;
+    color: var(--green-dark);
+    font-weight: 600;
+}
+
+/* ---------- Карта клуба ---------- */
+.club-card {
+    padding: 1.5rem;
+    border-radius: 14px;
+    background: var(--green-dark);
+    color: #fff;
+}
+
+.club-card-label {
+    font-size: 0.85rem;
+    opacity: 0.85;
+}
+
+.club-card-number {
+    margin: 0.5rem 0;
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+}
+
+.club-card-hint,
+.club-card-empty {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.club-card-empty {
+    margin-top: 0.5rem;
+}
+
+/* ---------- Текущий абонемент ---------- */
+.membership {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: #fff;
+}
+
+.membership-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.membership-left {
+    color: var(--muted);
+}
+
+.membership-days {
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: var(--green-dark);
+}
+
+.membership-dates {
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.membership .btn {
+    margin-top: 0.4rem;
+}
+
+/* ---------- Списки ---------- */
+.list-block {
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: #fff;
+}
+
+.list-title {
+    margin-bottom: 0.6rem;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.list-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.55rem 0;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+}
+
+.list-muted {
+    color: var(--muted);
+}
+
+.list-total {
+    margin-top: 0.6rem;
+    font-weight: 600;
+}
