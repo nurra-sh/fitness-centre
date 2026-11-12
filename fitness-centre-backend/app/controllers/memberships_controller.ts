@@ -8,6 +8,7 @@ import Payment from '#models/payment'
 import { PaymentMethod, PaymentStatus } from '#enums/payment_enums'
 import { purchaseValidator } from '#validators/membership'
 import { describeMembership, payWithKaspi, todayIso } from '#services/membership_service'
+import { getStripe, getStripeCurrency, toStripeAmount } from '#services/stripe_service'
 
 /** Имитация оплаты включена всегда, кроме production: там её нужно разрешить в .env */
 function simulatedPaymentsAllowed(): boolean {
@@ -85,7 +86,7 @@ export default class MembershipsController {
    * POST /memberships/purchase { planId, paymentMethod }
    * Покупка абонемента самим пользователем. Цену берём из БД, а не от клиента.
    */
-  async purchase({ auth, request, response }: HttpContext) {
+  async purchase({ auth, request, response, logger }: HttpContext) {
     const user = auth.getUserOrFail()
     const { planId, paymentMethod } = await request.validateUsing(purchaseValidator)
 
@@ -109,9 +110,56 @@ export default class MembershipsController {
       return response.created({ paymentId: result.paymentId, status: PaymentStatus.CONFIRMED })
     }
 
-    // PaymentMethod.DEBIT_CARD: сюда добавится Stripe. Нужно будет создать Payment со статусом pending,
-    // сохранить сумму в stripeAmount, создать сессию Checkout и вернуть её url,
-    // а завершит платёж вебхук через completePayment(paymentId, PaymentStatus.PAID).
-    return response.notImplemented({ message: 'Оплата банковской картой скоро будет доступна' })
+        // PaymentMethod.DEBIT_CARD: оплата картой через Stripe Checkout.
+    // Абонемент здесь не выдаётся: его выдаст вебхук (WebhooksController) после реальной оплаты.
+    const currency = getStripeCurrency()
+    const stripeAmount = toStripeAmount(plan.price)
+
+    const payment = await Payment.create({
+      userId: user.id,
+      planId: plan.id,
+      amount: plan.price,
+      method: PaymentMethod.DEBIT_CARD,
+      status: PaymentStatus.PENDING,
+      currency,
+      stripeAmount,
+    })
+
+    try {
+      const frontendUrl = env.get('FRONTEND_URL')
+
+      const session = await getStripe().checkout.sessions.create({
+        mode: 'payment',
+        locale: 'ru',
+        customer_email: user.email,
+        line_items: [
+          {
+            quantity: 1,
+            price_data: {
+              currency,
+              unit_amount: stripeAmount,
+              product_data: { name: `Абонемент: ${plan.name}` },
+            },
+          },
+        ],
+        metadata: { paymentId: String(payment.id) },
+        expires_at: Math.floor(Date.now() / 1000) + 60 * 60,
+        success_url: `${frontendUrl}/my-membership?payment=success`,
+        cancel_url: `${frontendUrl}/plans?payment=cancelled`,
+      })
+
+      await payment.merge({ stripeSessionId: session.id }).save()
+
+      return response.created({
+        paymentId: payment.id,
+        status: PaymentStatus.PENDING,
+        url: session.url,
+      })
+    } catch (error) {
+      logger.error({ err: error, paymentId: payment.id }, 'Не удалось создать сессию Stripe')
+      await payment.merge({ status: PaymentStatus.CANCELLED }).save()
+
+      return response.badGateway({ message: 'Не удалось создать платёж, попробуйте позже' })
+    }
   }
 }

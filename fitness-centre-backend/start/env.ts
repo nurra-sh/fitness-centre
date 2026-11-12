@@ -28,5 +28,10 @@ export default await Env.create(new URL('../', import.meta.url), {
   DB_USER: Env.schema.string(),
   DB_PASSWORD: Env.schema.string.optional(),
   DB_DATABASE: Env.schema.string(),
-  ALLOW_SIMULATED_PAYMENTS: Env.schema.boolean.optional()
+  ALLOW_SIMULATED_PAYMENTS: Env.schema.boolean.optional(),
+   STRIPE_SECRET_KEY: Env.schema.string(),
+  STRIPE_WEBHOOK_SECRET: Env.schema.string(),
+  STRIPE_CURRENCY: Env.schema.string.optional(),
+  STRIPE_KZT_RATE: Env.schema.number.optional(),
+  FRONTEND_URL: Env.schema.string(),
 })

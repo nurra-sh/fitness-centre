@@ -40,4 +40,5 @@ export interface PurchaseBody {
 export interface PurchaseResponse {
     paymentId: number
     status: PaymentStatus
+        url?: string | null // адрес страницы оплаты Stripe (только для оплаты картой)
 }

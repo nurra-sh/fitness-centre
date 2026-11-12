@@ -13,7 +13,13 @@
         <p class="state">Не удалось загрузить данные. Обновите страницу или попробуйте позже.</p>
         } @else if (data(); as info) {
 
-        @if (justPaid) {
+                @if (waiting()) {
+        <div class="banner banner--info">Ждём подтверждение оплаты. Обычно это занимает несколько секунд.</div>
+        } @else if (stillPending()) {
+        <div class="banner banner--info">
+            Платёж ещё обрабатывается. Абонемент появится здесь автоматически, обновите страницу через минуту.
+        </div>
+        } @else if (justPaid && (info.current || info.upcoming.length > 0)) {
         <div class="banner">Оплата принята, абонемент оформлен.</div>
         }
 

@@ -1,7 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { fromEvent } from 'rxjs';
+import { REDIRECT } from '../../core/tokens/redirect.token';
 import { Auth } from '../../modules/auth/services/auth';
 import { MembershipsApi } from '../../modules/memberships/services/memberships-api';
 import { PaymentMethod } from '../../modules/memberships/types/memberships.types';
@@ -26,15 +28,18 @@ export class PlansPage {
    private readonly auth = inject(Auth);
   private readonly router = inject(Router);
   private readonly membershipsApi = inject(MembershipsApi);
+    private readonly redirect = inject(REDIRECT);
+
+  // ?payment=cancelled приходит, если человек вернулся со страницы оплаты Stripe, не заплатив
+  readonly paymentCancelled = inject(ActivatedRoute).snapshot.queryParamMap.get('payment') === 'cancelled';
 
   // окно выбора способа оплаты
   readonly selectedPlan = signal<Plan | null>(null);
   readonly purchasing = signal(false);
   readonly purchaseError = signal<string | null>(null);
 
-  // Когда подключим Stripe, у банковской карты нужно поставить enabled: true
-  readonly methods: { id: PaymentMethod; title: string; hint: string; enabled: boolean }[] = [
-    { id: 'debit_card', title: 'Банковская карта', hint: 'Скоро: оплата через Stripe', enabled: false },
+    readonly methods: { id: PaymentMethod; title: string; hint: string; enabled: boolean }[] = [
+    { id: 'debit_card', title: 'Банковская карта', hint: 'Безопасная оплата через Stripe', enabled: true },
     { id: 'kaspi', title: 'Kaspi', hint: 'Имитация оплаты для учебного проекта', enabled: true },
   ];
 
@@ -71,6 +76,14 @@ export class PlansPage {
           this.plansLoading.set(false);
         },
       });
+          // Кнопка «Назад» в браузере может вернуть страницу из кеша вместе с зависшим окном оплаты
+    fromEvent<PageTransitionEvent>(window, 'pageshow')
+      .pipe(takeUntilDestroyed())
+      .subscribe((event) => {
+        if (event.persisted) {
+          this.purchasing.set(false);
+        }
+      });
   }
 
   savingPercent(plan: Plan): number {
@@ -104,7 +117,19 @@ export class PlansPage {
     this.purchaseError.set(null);
 
     this.membershipsApi.purchase({ planId: plan.id, paymentMethod: method }).subscribe({
-      next: () => {
+            next: (response) => {
+        if (method === 'debit_card') {
+          if (!response.url) {
+            this.purchasing.set(false);
+            this.purchaseError.set('Не удалось получить ссылку на оплату. Попробуйте ещё раз.');
+            return;
+          }
+
+          // уходим на страницу оплаты Stripe; purchasing остаётся true, чтобы нельзя было нажать повторно
+          this.redirect(response.url);
+          return;
+        }
+
         this.purchasing.set(false);
         this.selectedPlan.set(null);
         this.router.navigate(['/my-membership'], { queryParams: { payment: 'success' } });

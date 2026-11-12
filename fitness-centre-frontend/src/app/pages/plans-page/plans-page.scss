@@ -356,3 +356,12 @@
 .modal-close {
     width: 100%;
 }
+.banner {
+    margin-bottom: 1.25rem;
+    padding: 0.9rem 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--text);
+    font-weight: 600;
+}

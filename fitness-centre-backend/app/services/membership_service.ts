@@ -7,6 +7,7 @@ import Payment from '#models/payment'
 import User from '#models/user'
 import { PaymentMethod, PaymentStatus } from '#enums/payment_enums'
 import { ensureCardNumber } from '#services/card_service'
+import Stripe from 'stripe'
 
 const TIME_ZONE = 'Asia/Almaty'
 
@@ -184,6 +185,44 @@ export async function cancelPayment(paymentId: number): Promise<boolean> {
 }
 
 export type KaspiResult = { ok: true; paymentId: number } | { ok: false; reason: 'duplicate' }
+
+export type StripeSessionResult =
+  CompleteResult | 'payment_not_found' | 'not_paid_yet' | 'amount_mismatch'
+
+/**
+ * Обработка оплаченной сессии Stripe (checkout.session.completed).
+ * Платёж ищем по id сессии, а сумму и валюту сверяем с тем, что мы сами записали при создании сессии.
+ */
+export async function completeStripePayment(
+  session: Stripe.Checkout.Session
+): Promise<StripeSessionResult> {
+  const payment = await Payment.findBy('stripe_session_id', session.id)
+
+  // чужая сессия (например, от другого проекта на том же аккаунте Stripe)
+  if (!payment) return 'payment_not_found'
+
+  // для отложенных способов оплаты статус станет paid позже (async_payment_succeeded)
+  if (session.payment_status !== 'paid') return 'not_paid_yet'
+
+  if (session.amount_total !== payment.stripeAmount || session.currency !== payment.currency) {
+    return 'amount_mismatch'
+  }
+
+  const paymentIntentId =
+    typeof session.payment_intent === 'string' ? session.payment_intent : session.payment_intent?.id
+
+  return completePayment(payment.id, PaymentStatus.PAID, {
+    stripePaymentIntentId: paymentIntentId,
+  })
+}
+
+/** Сессия Stripe истекла или оплата не прошла: отменяем платёж. */
+export async function failStripePayment(sessionId: string): Promise<boolean> {
+  const payment = await Payment.findBy('stripe_session_id', sessionId)
+  if (!payment) return false
+
+  return cancelPayment(payment.id)
+}
 
 /**
  * Имитация оплаты через Kaspi (как cash_on_delivery в Scoville): платёж сразу получает статус

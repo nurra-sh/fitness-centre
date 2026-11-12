@@ -10,6 +10,9 @@
 
 <section class="plans">
     <div class="container">
+                @if (paymentCancelled) {
+        <div class="banner">Оплата отменена, деньги не списаны. Вы можете выбрать абонемент и способ оплаты снова.</div>
+        }
         @if (plansLoading()) {
         <p class="plans-state">Загружаем абонементы...</p>
         } @else if (plansError()) {

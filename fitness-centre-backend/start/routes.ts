@@ -13,6 +13,7 @@ import { middleware } from './kernel.js'
 import { RolesEnum } from '#enums/role_enums'
 import PlansController from '#controllers/plans_controller'
 import MembershipsController from '#controllers/memberships_controller'
+import WebhooksController from '#controllers/webhooks_controller'
 
 router.get('/', async () => {
   return {
@@ -34,6 +35,8 @@ router.group(() => {
     })
     .prefix('memberships')
     .use(middleware.auth({ guards: ['api'] }))
+      // вызывается самим Stripe, без токена пользователя: подлинность проверяется по подписи
+  router.post('webhooks/stripe', [WebhooksController, 'stripe'])
 }).prefix('/api/v1')
 // Админские маршруты: сначала проверка токена, потом проверка роли
 router
