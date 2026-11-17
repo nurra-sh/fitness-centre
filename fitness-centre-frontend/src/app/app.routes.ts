@@ -8,7 +8,6 @@ import guestGuard from './modules/auth/guards/guest.guard';
 import { roleGuard } from './modules/auth/guards/role.guard';
 import { RolesEnum } from './modules/auth/types/auth.types';
 import { RouterOutletShell } from './layout/router-outlet-shell/router-outlet-shell';
-import { AdminDashboardPage } from './pages/admin-dashboard-page/admin-dashboard-page';
 import { MyMembershipPage } from './pages/my-membership-page/my-membership-page';
 import authGuard from './modules/auth/guards/auth.guard';
 
@@ -52,7 +51,9 @@ export const routes: Routes = [
                     },
                     {
                         path: 'dashboard',
-                        component: AdminDashboardPage
+                        // админка грузится отдельным файлом только при открытии, чтобы не раздувать основной бандл
+                        loadComponent: () =>
+                            import('./pages/admin-dashboard-page/admin-dashboard-page').then((m) => m.AdminDashboardPage)
                     }
                 ]
             }

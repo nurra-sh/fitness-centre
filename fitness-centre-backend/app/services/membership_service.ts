@@ -21,7 +21,7 @@ export function todayIso(): string {
   return DateTime.now().setZone(TIME_ZONE).toISODate()!
 }
 
-function daysBetween(fromIso: string, toIso: string): number {
+export function daysBetween(fromIso: string, toIso: string): number {
   const from = DateTime.fromISO(fromIso, { zone: 'utc' })
   const to = DateTime.fromISO(toIso, { zone: 'utc' })
   return Math.round(to.diff(from, 'days').days)

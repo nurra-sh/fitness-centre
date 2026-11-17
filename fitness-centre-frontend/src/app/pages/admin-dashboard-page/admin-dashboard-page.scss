@@ -1,14 +1,176 @@
-.admin-page {
-    padding: 3rem 0;
+:host {
+    --green: var(--p-primary-color, #10b981);
+    --green-dark: var(--p-primary-600, #059669);
+    --border: #dfe6e1;
+    --muted: #5f6b76;
+    display: block;
+    padding: 2rem;
+}
+
+.admin-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .admin-title {
-    font-size: 2rem;
-    font-weight: 800;
-    margin-bottom: 0.75rem;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
 }
 
-.admin-text {
-    color: #5f6b76;
-    line-height: 1.6;
+.section-title {
+    margin: 2rem 0 1rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+/* ---------- Карточки статистики ---------- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #f4f7f5;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--muted);
+}
+
+.stat-value {
+    margin: 0.25rem 0 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111;
+}
+
+.stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 12px;
+    font-size: 1.5rem;
+}
+
+.icon-total {
+    background: #e0e7ff;
+    color: #4f46e5;
+}
+
+.icon-active {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.icon-expiring {
+    background: #ffedd5;
+    color: #ea580c;
+}
+
+.stats-error {
+    margin-top: 0.75rem;
+    color: #b42318;
+}
+
+/* ---------- Поиск и фильтр ---------- */
+.admin-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.admin-search {
+    flex: 1 1 320px;
+
+    input {
+        width: 100%;
+    }
+}
+
+.admin-status {
+    min-width: 240px;
+}
+
+.card-check {
+    display: block;
+    margin-bottom: 1rem;
+}
+
+/* ---------- Таблица ---------- */
+.table-card {
+    overflow-x: auto;
+    border: 1px solid #eee;
+    border-radius: 12px;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap;
+
+    thead {
+        background: #e7f6ef;
+    }
+
+    th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 700;
+    }
+
+    td {
+        padding: 0.9rem 1rem;
+        border-top: 1px solid #eee;
+    }
+
+    tbody tr:nth-child(even) {
+        background: #fafafa;
+    }
+}
+
+.mono {
+    font-family: ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+    letter-spacing: 0.03em;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.plan-name {
+    margin-left: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.empty-row,
+.skeleton-row {
+    padding: 2rem;
+    text-align: center;
+    color: #9ca3af;
 }
