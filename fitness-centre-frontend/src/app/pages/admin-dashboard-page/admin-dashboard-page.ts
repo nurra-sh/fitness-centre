@@ -15,6 +15,7 @@ import { AdminMembersApi } from '../../modules/admin/services/admin-members-api'
 import { DashboardStats, MemberRow, MemberStatusFilter } from '../../modules/admin/types/admin.types';
 import { formatCardNumber, formatDate, pluralDays } from '../../modules/memberships/utils/memberships.utils';
 import { Pagination } from '../../shared/ui/pagination/pagination';
+import { RouterLink } from '@angular/router';
 
 const PER_PAGE = 10;
 
@@ -40,7 +41,7 @@ function isCardNumber(search: string): boolean {
 @Component({
   selector: 'app-admin-dashboard-page',
   imports: [
-    DatePipe, ReactiveFormsModule, ButtonModule, IconFieldModule, InputIconModule,
+    DatePipe, RouterLink,ReactiveFormsModule, ButtonModule, IconFieldModule, InputIconModule,
     InputTextModule, MessageModule, SelectModule, TagModule, Pagination,
   ],
   templateUrl: './admin-dashboard-page.html',

@@ -40,3 +40,25 @@ export interface DashboardStats {
     activeMembers: number
     expiringMembers: number
 }
+export type OfflinePaymentMethod = 'kaspi' | 'cash'
+
+export interface CreateMemberBody {
+    fullName: string
+    email: string
+    phone: string
+    iin?: string
+    planId?: number
+    paymentMethod?: OfflinePaymentMethod
+}
+
+export interface CreateMemberResponse {
+    member: {
+        id: number
+        fullName: string
+        email: string
+        phone: string
+        cardNumber: string | null
+    }
+    membership: { planName: string; startDate: string; endDate: string } | null
+    temporaryPassword: string
+}

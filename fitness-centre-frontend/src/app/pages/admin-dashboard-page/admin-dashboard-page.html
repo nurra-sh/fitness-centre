@@ -31,7 +31,7 @@
     <p class="stats-error">Не удалось загрузить статистику.</p>
     }
 
-    <h2 class="section-title">Пользователи</h2>
+    <h2 class="section-title">Все пользователи</h2>
 
     <div class="admin-toolbar">
         <p-iconfield class="admin-search">
@@ -43,8 +43,17 @@
         <p-select class="admin-status" [formControl]="statusControl" [options]="statusOptions" optionLabel="label"
             optionValue="value" placeholder="Все статусы" [showClear]="true" />
 
-        <button pButton type="button" class="refresh-btn" severity="secondary" outlined="true" label="Обновить"
-            icon="pi pi-refresh" (click)="refresh()"></button>
+        <button pButton type="button" class="refresh-btn" severity="secondary" outlined="true" (click)="refresh()">
+            <i class="pi pi-refresh" pButtonIcon></i>
+            <span pButtonLabel>Обновить</span>
+        </button>
+
+        <a routerLink="/admin/members/new">
+            <button pButton type="button" class="add-btn">
+                <i class="pi pi-user-plus" pButtonIcon></i>
+                <span pButtonLabel>Добавить пользователя</span>
+            </button>
+        </a>
     </div>
 
     @if (cardCheck(); as check) {

@@ -39,8 +39,9 @@ export class LoginPage {
       .subscribe({
         next: (response) => {
           console.log(response)
-          if (response) {
-            this.router.navigateByUrl('/')
+           if (response) {
+            // временный пароль от админа: сразу на смену пароля
+            this.router.navigateByUrl(response.user?.mustChangePassword ? '/change-password' : '/')
           }
         }
       })

@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { DashboardStats, MembersFilters, MembersResponse } from '../types/admin.types';
+import { CreateMemberBody, CreateMemberResponse, DashboardStats, MembersFilters, MembersResponse } from '../types/admin.types';
 
 @Injectable({
   providedIn: 'root',
@@ -23,5 +23,8 @@ export class AdminMembersApi {
     }
 
     return this.http.get<MembersResponse>(`${environment.apiUrl}/admin/members`, { params })
+  }
+    createMember(body: CreateMemberBody) {
+    return this.http.post<CreateMemberResponse>(`${environment.apiUrl}/admin/members`, body)
   }
 }

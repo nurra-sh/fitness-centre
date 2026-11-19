@@ -148,6 +148,32 @@ async function activatePayment(
   return grantMembership(trx, payment, plan)
 }
 
+/**
+ * Оплата на ресепшене (Kaspi или наличные), которую оформляет админ: платёж сразу confirmed,
+ * абонемент и карта выдаются той же функцией, что и при покупке на сайте.
+ * Вызывать внутри транзакции.
+ */
+export async function grantConfirmedPayment(
+  trx: TransactionClientContract,
+  params: { userId: number; plan: MembershipPlan; method: PaymentMethod; adminId: number }
+) {
+  const payment = await Payment.create(
+    {
+      userId: params.userId,
+      planId: params.plan.id,
+      amount: params.plan.price,
+      method: params.method,
+      status: PaymentStatus.PENDING,
+      createdByAdminId: params.adminId,
+    },
+    { client: trx }
+  )
+
+  const membership = await activatePayment(trx, payment, PaymentStatus.CONFIRMED)
+
+  return { payment, membership }
+}
+
 export type CompleteResult = 'activated' | 'already_processed' | 'cancelled' | 'not_found'
 
 /**

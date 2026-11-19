@@ -10,6 +10,8 @@ import { RolesEnum } from './modules/auth/types/auth.types';
 import { RouterOutletShell } from './layout/router-outlet-shell/router-outlet-shell';
 import { MyMembershipPage } from './pages/my-membership-page/my-membership-page';
 import authGuard from './modules/auth/guards/auth.guard';
+import { ChangePasswordPage } from './pages/change-password-page/change-password-page';
+import changePasswordGuard from './modules/auth/guards/change-password.guard';
 
 export const routes: Routes = [
     {
@@ -28,6 +30,11 @@ export const routes: Routes = [
                 path: 'my-membership',
                 component: MyMembershipPage,
                 canActivate: [authGuard]
+            },
+                        {
+                path: 'change-password',
+                component: ChangePasswordPage,
+                canActivate: [changePasswordGuard]
             },
             {
                 path: 'login',
@@ -54,6 +61,11 @@ export const routes: Routes = [
                         // админка грузится отдельным файлом только при открытии, чтобы не раздувать основной бандл
                         loadComponent: () =>
                             import('./pages/admin-dashboard-page/admin-dashboard-page').then((m) => m.AdminDashboardPage)
+                    },
+                       {
+                        path: 'members/new',
+                        loadComponent: () =>
+                            import('./pages/admin-member-form-page/admin-member-form-page').then((m) => m.AdminMemberFormPage)
                     }
                 ]
             }

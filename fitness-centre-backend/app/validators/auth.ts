@@ -2,7 +2,7 @@ import vine from '@vinejs/vine'
 import { normalizePhone } from '#services/phone_service'
 
 // Проверяет номер и сохраняет его в едином виде +7XXXXXXXXXX
-const phoneRule = vine.createRule((value, _options, field) => {
+export const phoneRule = vine.createRule((value, _options, field) => {
   if (typeof value !== 'string') {
     return
   }
@@ -17,31 +17,47 @@ const phoneRule = vine.createRule((value, _options, field) => {
 })
 
 export const loginValidator = vine.compile(
-  vine.object({email: vine.string().email().normalizeEmail(),
-  password: vine.string(),
-})
+  vine.object({
+    email: vine.string().email().normalizeEmail(),
+    password: vine.string(),
+  })
 )
 
 export const registerValidator = vine.compile(
   vine.object({
     email: vine
-    .string()
-    .trim()
-    .email()
-    .normalizeEmail()
-    .unique(async (db, value) => {
+      .string()
+      .trim()
+      .email()
+      .normalizeEmail()
+      .unique(async (db, value) => {
         const matchedUser = await db.from('users').select('id').where('email', value).first()
         return !matchedUser
-    }),
+      }),
     password: vine
+      .string()
+      .trim()
+      .minLength(8)
+      .maxLength(128)
+      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
+      .confirmed(),
+    fullName: vine.string().trim(),
+    phone: vine.string().trim().use(phoneRule()),
+  })
+
+
+)
+const newPasswordRule = () =>
+  vine
     .string()
     .trim()
     .minLength(8)
     .maxLength(128)
     .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
-    .confirmed(),
-    fullName: vine.string().trim(),
-    phone: vine.string().trim().use(phoneRule()),
+
+export const changePasswordValidator = vine.compile(
+  vine.object({
+    currentPassword: vine.string(),
+    password: newPasswordRule().confirmed(),
   })
-  
 )

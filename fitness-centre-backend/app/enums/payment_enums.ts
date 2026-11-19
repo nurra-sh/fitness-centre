@@ -8,4 +8,5 @@ export enum PaymentStatus {
 export enum PaymentMethod {
   DEBIT_CARD = 'debit_card', // банковская карта через Stripe
   KASPI = 'kaspi', // оплата через Kaspi Терминал на рецепшионе, пока имитация
+    CASH = 'cash', // наличные на ресепшене (оформляет только админ), тоже имитация
 }

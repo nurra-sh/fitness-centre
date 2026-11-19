@@ -16,6 +16,7 @@ export interface User {
     email: string
     phone: string | null
     cardNumber: string | null
+    mustChangePassword: boolean // вошёл с временным паролем от админа, нужно сменить
     roleId: RolesIdEnum
     createdAt: string
     updatedAt: string
@@ -34,6 +35,16 @@ export interface RegisterResponse {
 }
 
 export interface GetMeResponse {
+    user: User
+}
+export interface ChangePasswordBody {
+    currentPassword: string
+    password: string
+    password_confirmation: string
+}
+
+export interface ChangePasswordResponse {
+    message: string
     user: User
 }
 

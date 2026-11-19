@@ -1,7 +1,9 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import User from '#models/user'
 import { loginValidator } from '#validators/auth'
-import { registerValidator } from '#validators/auth'
+import hash from '@adonisjs/core/services/hash'
+import { changePasswordValidator, registerValidator } from '#validators/auth'
+
 export default class AuthController {
     async login({ request, response }: HttpContext) {
         const { email, password } = await request.validateUsing(loginValidator)
@@ -35,4 +37,30 @@ export default class AuthController {
             user: auth.user
         })
     }
+      /**
+   * POST /auth/change-password { currentPassword, password, password_confirmation }
+   * Смена пароля. Снимает флаг обязательной смены после временного пароля от админа.
+   */
+  async changePassword({ auth, request, response }: HttpContext) {
+    const user = auth.getUserOrFail()
+    const { currentPassword, password } = await request.validateUsing(changePasswordValidator)
+
+    if (!(await hash.verify(user.password, currentPassword))) {
+      return response.unprocessableEntity({
+        errors: [{ field: 'currentPassword', message: 'Текущий пароль указан неверно' }],
+      })
+    }
+
+    if (currentPassword === password) {
+      return response.unprocessableEntity({
+        errors: [{ field: 'password', message: 'Новый пароль должен отличаться от текущего' }],
+      })
+    }
+
+    user.password = password
+    user.mustChangePassword = false
+    await user.save()
+
+    return response.ok({ message: 'Пароль изменён', user: user.serialize() })
+  }
 }

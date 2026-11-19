@@ -9,9 +9,13 @@ const authGuard: CanActivateFn = () => {
     const authService = inject(Auth)
     const router = inject(Router)
 
+        // Вошёл с временным паролем от админа: сначала нужно придумать свой
+    const allow = () =>
+        authService.currentUser()?.mustChangePassword ? router.createUrlTree(['/change-password']) : true
+
     // Если есть токен и данные пользователя, то пропускаем
     if (authService.isAuthenticated()) {
-        return true
+        return allow()
     }
 
     // Пытаемся получить пользователя, если есть хотя бы токен

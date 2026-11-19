@@ -1,0 +1,143 @@
+<div class="admin-form">
+    <a class="back-link" routerLink="/admin/dashboard"><i class="pi pi-arrow-left"></i> К списку пользователей</a>
+
+    <h1 class="admin-title">Новый пользователь</h1>
+
+    @if (result(); as created) {
+    <div class="info-card result-card">
+        <h2 class="section-title">Пользователь создан</h2>
+
+        <dl class="result-list">
+            <dt>ФИО</dt>
+            <dd>{{ created.member.fullName }}</dd>
+            <dt>Почта (логин)</dt>
+            <dd>{{ created.member.email }}</dd>
+            <dt>Карта</dt>
+            <dd class="mono">
+                {{ created.member.cardNumber ? formatCardNumber(created.member.cardNumber) : 'Появится после первой оплаты' }}
+            </dd>
+            <dt>Абонемент</dt>
+            <dd>
+                @if (created.membership; as membership) {
+                {{ membership.planName }}, с {{ formatDate(membership.startDate) }} до {{ formatDate(membership.endDate) }}
+                } @else {
+                Не оформлен
+                }
+            </dd>
+        </dl>
+
+        <div class="password-box">
+            <span class="password-label">Временный пароль</span>
+            <span class="password-value mono">{{ created.temporaryPassword }}</span>
+            <button pButton type="button" severity="secondary" outlined="true" (click)="copyPassword()">
+                <i class="pi pi-copy" pButtonIcon></i>
+                <span pButtonLabel>{{ copied() ? 'Скопировано' : 'Скопировать' }}</span>
+            </button>
+        </div>
+
+        <p-message severity="warn">
+            Передайте пароль пользователю сейчас: после ухода со страницы его нельзя будет посмотреть.
+            При первом входе система попросит придумать свой пароль.
+        </p-message>
+
+        <div class="actions">
+            <button pButton type="button" (click)="addAnother()">
+                <i class="pi pi-plus" pButtonIcon></i>
+                <span pButtonLabel>Добавить ещё</span>
+            </button>
+            <a routerLink="/admin/dashboard">
+                <button pButton type="button" severity="secondary" outlined="true">К списку пользователей</button>
+            </a>
+        </div>
+    </div>
+    } @else {
+    <form class="info-card" [formGroup]="form" (ngSubmit)="save()">
+        <h2 class="section-title">Данные пользователя</h2>
+
+        <div class="field">
+            <label for="fullName">ФИО *</label>
+            <input pInputText id="fullName" type="text" formControlName="fullName" placeholder="Иванов Иван Иванович" />
+            @if (form.controls.fullName.touched && form.controls.fullName.invalid) {
+            <p-message severity="error" variant="simple" size="small">
+                {{ form.controls.fullName.errors?.['server'] || 'Введите ФИО (минимум 2 символа)' }}
+            </p-message>
+            }
+        </div>
+
+        <div class="field">
+            <label for="email">Почта (логин для входа) *</label>
+            <input pInputText id="email" type="email" formControlName="email" placeholder="name@example.com" />
+            @if (form.controls.email.touched && form.controls.email.invalid) {
+            <p-message severity="error" variant="simple" size="small">
+                {{
+                form.controls.email.errors?.['server']
+                || (form.controls.email.errors?.['required'] ? 'Почта обязательна' : 'Неверная почта')
+                }}
+            </p-message>
+            }
+        </div>
+
+        <div class="field">
+            <label for="phone">Телефон *</label>
+            <input pInputText id="phone" type="tel" formControlName="phone" placeholder="+7 701 123 45 67" />
+            @if (form.controls.phone.touched && form.controls.phone.invalid) {
+            <p-message severity="error" variant="simple" size="small">
+                {{
+                form.controls.phone.errors?.['server']
+                || (form.controls.phone.errors?.['required'] ? 'Телефон обязателен' : 'Введите номер в формате +7 XXX XXX XX XX')
+                }}
+            </p-message>
+            }
+            @if (samePhone().length > 0) {
+            <p-message severity="warn" size="small">
+                Этот номер уже есть у:
+                @for (member of samePhone(); track member.id; let last = $last) {
+                {{ member.fullName || member.email }}{{ last ? '' : ', ' }}
+                }
+                . Создать всё равно можно.
+            </p-message>
+            }
+        </div>
+
+        <div class="field">
+            <label for="iin">ИИН</label>
+            <input pInputText id="iin" type="text" inputmode="numeric" maxlength="12" formControlName="iin"
+                placeholder="12 цифр, необязательно" />
+            @if (form.controls.iin.touched && form.controls.iin.invalid) {
+            <p-message severity="error" variant="simple" size="small">
+                {{ form.controls.iin.errors?.['server'] || 'ИИН состоит из 12 цифр' }}
+            </p-message>
+            }
+        </div>
+
+        <h2 class="section-title">Абонемент</h2>
+
+        <div class="field">
+            <label for="planId">Тариф</label>
+            <p-select inputId="planId" formControlName="planId" [options]="planOptions()" optionLabel="label"
+                optionValue="value" placeholder="Без абонемента" [showClear]="true" class="full" />
+        </div>
+
+        @if (form.controls.planId.value) {
+        <div class="field">
+            <label>Способ оплаты *</label>
+            <p-selectbutton formControlName="paymentMethod" [options]="paymentOptions" optionLabel="label"
+                optionValue="value" />
+            @if (form.controls.paymentMethod.touched && form.controls.paymentMethod.invalid) {
+            <p-message severity="error" variant="simple" size="small">Выберите способ оплаты</p-message>
+            }
+        </div>
+        }
+
+        <div class="actions">
+            <button pButton type="submit" [loading]="saving()">
+                <i class="pi pi-check" pButtonIcon></i>
+                <span pButtonLabel>Добавить пользователя</span>
+            </button>
+            <a routerLink="/admin/dashboard">
+                <button pButton type="button" severity="secondary" outlined="true">Отмена</button>
+            </a>
+        </div>
+    </form>
+    }
+</div>

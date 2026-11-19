@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { GetMeResponse, LoginBody, LoginResponse, RegisterBody, RegisterResponse } from '../types/auth.types';
+import { ChangePasswordBody, ChangePasswordResponse, GetMeResponse, LoginBody, LoginResponse, RegisterBody, RegisterResponse } from '../types/auth.types';
 import { environment } from '../../../../environments/environment';
 import { tap } from 'rxjs';
 import { MessageService } from 'primeng/api';
@@ -44,6 +44,16 @@ me() {
     }).pipe(
       tap((response) => {
         this.authService.setCurrentUser(response.user)
+      })
+    )
+  }
+
+    changePassword(body: ChangePasswordBody) {
+    return this.http.post<ChangePasswordResponse>(`${environment.apiUrl}/auth/change-password`, body).pipe(
+      tap((response) => {
+        // флаг mustChangePassword снят: обновляем пользователя, чтобы гварды пропустили дальше
+        this.authService.setCurrentUser(response.user)
+        this.messageService.add({ key: 'app', severity: 'success', summary: 'Готово', detail: response.message })
       })
     )
   }

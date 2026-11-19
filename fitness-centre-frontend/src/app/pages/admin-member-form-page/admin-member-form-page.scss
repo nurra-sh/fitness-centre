@@ -1,0 +1,105 @@
+:host {
+    display: block;
+    padding: 2rem;
+}
+
+.admin-form {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+    color: #5f6b76;
+    text-decoration: none;
+}
+
+.admin-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0.5rem 0 1rem;
+}
+
+.info-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    background: #f7f7f7;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    label {
+        font-weight: 600;
+    }
+
+    input {
+        width: 100%;
+    }
+}
+
+.full {
+    width: 100%;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.result-list {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.5rem 1.5rem;
+
+    dt {
+        color: #5f6b76;
+    }
+
+    dd {
+        margin: 0;
+        font-weight: 600;
+    }
+}
+
+.password-box {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border: 1px dashed #9ca3af;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.password-label {
+    color: #5f6b76;
+}
+
+.password-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+.mono {
+    font-family: ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+}

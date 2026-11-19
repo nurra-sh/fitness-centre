@@ -27,6 +27,7 @@ router.group(() => {
     router.post('login', [AuthController, 'login'])
     router.post('register', [AuthController, 'register'])
     router.get('/me', [AuthController, 'me']).use(middleware.auth({ guards: ['api'] }))
+    router.post('change-password', [AuthController, 'changePassword']).use(middleware.auth({ guards: ['api'] }))
 
   }).prefix('auth')
   router.get('plans', [PlansController, 'index'])
@@ -46,6 +47,7 @@ router
     router.get('ping', async () => ({ message: 'pong, у вас права администратора' }))
     router.get('dashboard-stats', [AdminDashboardsController, 'stats'])
     router.get('members', [AdminMembersController, 'index'])
+    router.post('members', [AdminMembersController, 'store'])
   })
 
   .prefix('/api/v1/admin')
